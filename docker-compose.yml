@@ -3,6 +3,7 @@ services:
     build: ./backend
     ports:
       - "3000:3000"
+      - "5555:5555"
     volumes:
      - ./backend:/backend
     depends_on:
@@ -13,6 +14,7 @@ services:
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=sample
       - PORT=3000
+      - DATABASE_URL=mysql://user:password@mysql:3306/sample
   mysql:
     image: mysql:8.1
     ports:

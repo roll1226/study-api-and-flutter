@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:18.18.0
 
 # 作業ディレクトリを設定
 WORKDIR /backend
