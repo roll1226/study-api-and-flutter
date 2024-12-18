@@ -43,6 +43,12 @@ app.post("/todos", async (req: Request, res: Response) => {
   res.json(todo);
 });
 
+app.get("/qeury", async (req: Request, res: Response) => {
+  const query = req.query;
+  console.log(query);
+  res.json(query);
+});
+
 app.delete("/todos/:id", async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const todo = await prisma.todo.delete({
