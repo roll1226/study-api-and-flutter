@@ -1,7 +1,17 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
+
+// HttpClient をセットアップして IOClient を作成
+http.Client createHttpClient() {
+  final HttpClient httpClient = HttpClient()
+    ..badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+  return IOClient(httpClient);
+}
 
 void main() => runApp(const MyApp());
 
@@ -29,10 +39,11 @@ class UserListScreen extends StatefulWidget {
 }
 
 class _UserListScreenState extends State<UserListScreen> {
-  late Future<List<dynamic>> _users;
+  late Future<List<dynamic>> _todos;
+  final client = createHttpClient();
   Future<List<dynamic>> fetchUsers() async {
     final response =
-        await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
+        await client.get(Uri.parse('http://127.0.0.1:3000/todos'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -43,17 +54,17 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   void initState() {
     super.initState();
-    _users = fetchUsers();
+    _todos = fetchUsers();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Users'),
+        title: const Text('Todos'),
       ),
       body: FutureBuilder<List<dynamic>>(
-        future: _users,
+        future: _todos,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -63,10 +74,10 @@ class _UserListScreenState extends State<UserListScreen> {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                var user = snapshot.data![index];
+                var todo = snapshot.data![index];
                 return ListTile(
-                  title: Text(user['name']),
-                  subtitle: Text(user['email']),
+                  title: Text(todo['title']),
+                  // subtitle: Text(user['email']),
                 );
               },
             );
