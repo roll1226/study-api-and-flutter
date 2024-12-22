@@ -1,6 +1,6 @@
+import { PrismaClient } from "@prisma/client";
 import { configDotenv } from "dotenv";
 import express, { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -10,16 +10,14 @@ const app = express();
 app.use(express.json());
 const port = process.env.PORT || 3000;
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
-});
-
+// 一覧取得
 app.get("/todos", async (req: Request, res: Response) => {
   const todos = await prisma.todo.findMany();
   await prisma.$disconnect();
   res.json(todos);
 });
 
+// 詳細取得
 app.get("/todos/:id", async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const todo = await prisma.todo.findUnique({
@@ -43,6 +41,23 @@ app.post("/todos", async (req: Request, res: Response) => {
   res.json(todo);
 });
 
+// 更新
+app.put("/todos/:id", async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const { title } = req.body;
+  const todo = await prisma.todo.update({
+    where: {
+      id,
+    },
+    data: {
+      title,
+    },
+  });
+  await prisma.$disconnect();
+  res.json(todo);
+});
+
+// 削除
 app.delete("/todos/:id", async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const todo = await prisma.todo.delete({
