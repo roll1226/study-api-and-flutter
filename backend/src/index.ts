@@ -60,9 +60,12 @@ app.put("/todos/:id", async (req: Request, res: Response) => {
 // 削除
 app.delete("/todos/:id", async (req: Request, res: Response) => {
   const id = Number(req.params.id);
-  const todo = await prisma.todo.delete({
+  const todo = await prisma.todo.update({
     where: {
       id,
+    },
+    data: {
+      delete: true,
     },
   });
   await prisma.$disconnect();

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Todo` ADD COLUMN `delete` BOOLEAN NOT NULL DEFAULT false;
