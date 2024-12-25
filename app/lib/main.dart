@@ -42,7 +42,7 @@ class _UserListScreenState extends State<UserListScreen> {
   late Future<List<dynamic>> _todos;
   final client = createHttpClient();
 
-  Future<List<dynamic>> fetchUsers() async {
+  Future<List<dynamic>> fetchTodos() async {
     try {
       final response =
           await client.get(Uri.parse('http://127.0.0.1:3000/todos'));
@@ -65,7 +65,7 @@ class _UserListScreenState extends State<UserListScreen> {
       );
       if (response.statusCode == 201) {
         setState(() {
-          _todos = fetchUsers();
+          _todos = fetchTodos();
         });
       } else {
         throw Exception('Failed to add todo: ${response.statusCode}');
@@ -82,7 +82,7 @@ class _UserListScreenState extends State<UserListScreen> {
       );
       if (response.statusCode == 200) {
         setState(() {
-          _todos = fetchUsers();
+          _todos = fetchTodos();
         });
       } else {
         throw Exception('Failed to delete todo: ${response.statusCode}');
@@ -95,7 +95,7 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   void initState() {
     super.initState();
-    _todos = fetchUsers();
+    _todos = fetchTodos();
   }
 
   @override
@@ -107,7 +107,7 @@ class _UserListScreenState extends State<UserListScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            _todos = fetchUsers();
+            _todos = fetchTodos();
           });
         },
         child: FutureBuilder<List<dynamic>>(
