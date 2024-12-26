@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
+// APIエンドポイントのベースURL
+const String apiBaseUrl = 'http://http://127.0.0.1:3000';
+
 // HttpClient をセットアップして IOClient を作成
 http.Client createHttpClient() {
   final HttpClient httpClient = HttpClient()
@@ -45,7 +48,7 @@ class _UserListScreenState extends State<UserListScreen> {
   Future<List<dynamic>> fetchTodos() async {
     try {
       final response =
-          await client.get(Uri.parse('http://127.0.0.1:3000/todos'));
+          await client.get(Uri.parse('$apiBaseUrl/todos'));
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
@@ -59,7 +62,7 @@ class _UserListScreenState extends State<UserListScreen> {
   Future<void> addTodo(String title) async {
     try {
       final response = await client.post(
-        Uri.parse('http://127.0.0.1:3000/todos'),
+        Uri.parse('$apiBaseUrl/todos'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'title': title}),
       );
@@ -78,7 +81,7 @@ class _UserListScreenState extends State<UserListScreen> {
   Future<void> deleteTodo(int id) async {
     try {
       final response = await client.delete(
-        Uri.parse('http://127.0.0.1:3000/todos/$id'),
+        Uri.parse('$apiBaseUrl/todos/$id'),
       );
       if (response.statusCode == 200) {
         setState(() {
