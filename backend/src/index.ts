@@ -12,7 +12,11 @@ const port = process.env.PORT || 3000;
 
 // 一覧取得
 app.get("/todos", async (req: Request, res: Response) => {
-  const todos = await prisma.todo.findMany();
+  const todos = await prisma.todo.findMany({
+    where: {
+      delete_flag: false,
+    },
+  });
   await prisma.$disconnect();
   res.json(todos);
 });
@@ -65,7 +69,7 @@ app.delete("/todos/:id", async (req: Request, res: Response) => {
       id,
     },
     data: {
-      delete: true,
+      delete_flag: true,
     },
   });
   await prisma.$disconnect();
