@@ -15,7 +15,7 @@ app.get("/todos", async (req: Request, res: Response) => {
   try {
     const todos = await prisma.todo.findMany({
       where: {
-        delete_flag: false,
+        deleteFlag: false,
       },
     });
     res.json(todos);
@@ -75,9 +75,9 @@ app.delete("/todos/:id", async (req: Request, res: Response) => {
   try {
     const todo = await prisma.todo.update({
       where: { id },
-      data: { delete_flag: true },
+      data: { deleteFlag: true },
     });
-    res.json(todo); // 削除済みのデータを返す
+    res.json(todo);
   } catch (error) {
     res.status(404).json({ error: "Todo not found or already deleted" });
   }
