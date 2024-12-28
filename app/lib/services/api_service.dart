@@ -16,30 +16,61 @@ http.Client createHttpClient() {
 class ApiService {
   final http.Client client = createHttpClient();
 
-  Future<List<dynamic>> fetchTodos() async {
-    final response = await client.get(Uri.parse('$apiBaseUrl/todos'));
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to load todos: ${response.statusCode}');
+  // Todo一覧を取得
+  Future<List<Map<String, dynamic>>> fetchTodos() async {
+    try {
+      final response = await client.get(Uri.parse('$apiBaseUrl/todos'));
+      if (response.statusCode == 200) {
+        return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+      } else {
+        throw Exception(
+          'Failed to load todos: ${response.statusCode}, '
+          'Body: ${response.body}',
+        );
+      }
+    } catch (e) {
+      rethrow; // 呼び出し元で例外をキャッチ
     }
   }
 
-  Future<void> addTodo(String title) async {
-    final response = await client.post(
-      Uri.parse('$apiBaseUrl/todos'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'title': title}),
-    );
-    if (response.statusCode != 201) {
-      throw Exception('Failed to add todo: ${response.statusCode}');
+  // Todoを追加
+  Future<Map<String, dynamic>> addTodo(String title) async {
+    try {
+      final response = await client.post(
+        Uri.parse('$apiBaseUrl/todos'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'title': title}),
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception(
+          'Failed to add todo: ${response.statusCode}, '
+          'Body: ${response.body}',
+        );
+      }
+      // サーバーから返されたデータを返す
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (e) {
+      rethrow;
     }
   }
 
+  // Todoを削除
   Future<void> deleteTodo(int id) async {
-    final response = await client.delete(Uri.parse('$apiBaseUrl/todos/$id'));
-    if (response.statusCode != 200) {
-      throw Exception('Failed to delete todo: ${response.statusCode}');
+    try {
+      final response = await client.delete(Uri.parse('$apiBaseUrl/todos/$id'));
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw Exception(
+          'Failed to delete todo: ${response.statusCode}, '
+          'Body: ${response.body}',
+        );
+      }
+    } catch (e) {
+      rethrow;
     }
+  }
+
+  // リソース解放
+  void dispose() {
+    client.close();
   }
 }
