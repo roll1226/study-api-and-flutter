@@ -61,7 +61,7 @@ app.put("/todos/:id", async (req: Request, res: Response) => {
   try {
     const todo = await prisma.todo.update({
       where: { id },
-      data: { title },
+      data: { title, updatedAt: new Date() },
     });
     res.json(todo);
   } catch (error) {
@@ -75,7 +75,7 @@ app.delete("/todos/:id", async (req: Request, res: Response) => {
   try {
     const todo = await prisma.todo.update({
       where: { id },
-      data: { deleteFlag: true },
+      data: { deleteFlag: true, updatedAt: new Date() },
     });
     res.json(todo);
   } catch (error) {
